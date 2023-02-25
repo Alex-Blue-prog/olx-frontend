@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {Link} from "react-router-dom";
 import * as C from "./styles";
-import { PageContainer } from "../../components/MainComponents";
 import useApi from "../../helpers/OlxAPI";
+import { PageContainer } from "../../components/MainComponents";
+import { AdItem } from '../../components/partials/AdItem';
 
 
 export const Home = () => {
   const api = useApi();
   const [stateList, setStateList] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [adList, setAdList] = useState([]);
 
   useEffect(()=> {
     const getStates = async () => {
@@ -20,8 +22,17 @@ export const Home = () => {
       setCategories(cats);
     }
 
+    const getRecentAds = async () => {
+      const json = await api.getAds({
+        sort:"desc",
+        limit:8
+      });
+      setAdList(json.ads);
+    }
+
     getStates();
     getCategories();
+    getRecentAds();
   },[api]);
 
   return (
@@ -52,7 +63,17 @@ export const Home = () => {
 
       <PageContainer>
         <C.PageArea>
-          ...
+          <h2>Anúncios Recentes</h2>
+          <div className="list">
+            {adList.map((item, index) => (
+              <AdItem key={index} data={item} />
+            ))}
+          </div>
+          <Link to={"/ads"} className="seeAllLink">Ver todos...</Link>
+          <hr />
+          <p>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Itaque architecto modi eos, dolorum ipsa repellendus vero quasi, aliquam asperiores iste aperiam atque perspiciatis labore ipsam!
+          </p>
         </C.PageArea>
       </PageContainer>
     </>

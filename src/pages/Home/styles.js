@@ -77,5 +77,25 @@ export const SearchArea = styled.div`
 `;
 
 export const PageArea = styled.div`
-
+    h2 {
+        font-size: 20px;
+    }
+    .list {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        /* flex-wrap: wrap; */
+        /* .aditem {
+            width: 25%;
+        } */
+    }
+    .seeAllLink {
+        color: #49aeef;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 0.9rem;
+    }
+    
 `;

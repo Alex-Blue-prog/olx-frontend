@@ -29,7 +29,7 @@ export const PageArea = styled.div`
 
         .box {
             display: flex;
-            padding: 5px;
+            padding: 10px;
         }
 
         .adImage {
@@ -37,7 +37,7 @@ export const PageArea = styled.div`
             /* height: 320px; */
             display: flex;
             align-items: center;
-            background-color: #ddd;
+            background-color: #ccc;
             border-radius: 5px;
             margin-right: 20px;
             overflow: hidden;
@@ -71,7 +71,7 @@ export const PageArea = styled.div`
                 opacity: .7;
                 z-index: 999;
                 position: absolute;
-                top: calc(50% - 15px);
+                top: calc(50% - 16px);
                 cursor: pointer;
                 border-radius: 50%;
 
@@ -115,7 +115,7 @@ export const PageArea = styled.div`
                 margin-bottom: 20px;
 
                 h2 {
-                    margin-top: 20px;
+                    margin-top: 0px;
                 }
 
                 small {
@@ -123,7 +123,8 @@ export const PageArea = styled.div`
                 }
             }
             .adDescription {
-
+                font-size: 0.9rem;
+                line-height: 1.4rem;
                 small {
                     color: #999;
                 }
@@ -133,5 +134,62 @@ export const PageArea = styled.div`
 
     .rightSide {
         width: 250px;
+
+        .price span {
+            color: #49aeef;
+            display: block;
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        .contactSellerLink {
+            background-color: #49aeef;
+            color: #fff;
+            height: 30px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 4px #999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+
+        .createBy small {
+            display: block;
+            color: #999;
+            margin-top: 10px;
+        }
+    }
+`;
+
+//bottom area with the list of products(ads)
+export const OthersArea = styled.div`
+    margin-bottom: 20px;
+
+    h2 {
+        font-size: 20px;
+    }
+
+    .list {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+
+        .aditem .itemImg {
+            height: 200px;
+        }
+    }
+`;
+
+export const BreadCrumb = styled.div`
+    font-size: 13px;
+    margin-top: 20px;
+
+    a, span {
+        display: inline-block;
+        margin: 0 5px;
+        color: #49aeef;
+        text-decoration: none;
     }
 `;

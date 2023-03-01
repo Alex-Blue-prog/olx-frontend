@@ -18,7 +18,7 @@ export const AdPage = () => {
      //fix scroll
      useEffect(() => {
         window.scrollTo(0, 0);
-    },[adInfo]);
+    },[id]);
 
     useEffect(() => {
         const getAdInfo = async () => {

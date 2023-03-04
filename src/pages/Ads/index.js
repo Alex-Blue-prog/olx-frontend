@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {useSearchParams, useNavigate} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import * as C from "./styles";
 import useApi from "../../helpers/OlxAPI";
 import { PageContainer } from "../../components/MainComponents";
 import { AdItem } from '../../components/partials/AdItem';
-
+let timer;
+let secs = 0;
 
 export const Ads = () => {
     const api = useApi();
@@ -12,24 +13,57 @@ export const Ads = () => {
     //queryString section -- start
     const [searchParams, setSearchParams] = useSearchParams();
 
+    const[adList, setAdList] = useState([]);
+    const[opacity, setOpacity] = useState(1);
+    // const[secs, setSecs] = useState(0);
+    const[loading, setLoading] = useState(true);
+
     const[q, setQ] = useState(searchParams.get("q") || "");
     const[state, setState] = useState(searchParams.get("state") || "");
     const[cat, setCat] = useState(searchParams.get("cat") || "");
 
+
     useEffect(() => {
+    
         searchParams.set("q", q);
         searchParams.set("state", state);
         searchParams.set("cat", cat);
-
         setSearchParams(searchParams);
-    },[q, state, cat]);
+
+        //get list of products(ads)
+        const getAdsList = async () => {
+
+            setLoading(true);
+
+            const json = await api.getAds({
+                sort:"desc",
+                limit:9,
+                q,
+                state,
+                cat
+              });
+
+              setAdList(json.ads);
+              setOpacity(1);
+              setLoading(false);
+              secs = 2000;
+        }
+
+        if(timer) {
+            clearTimeout(timer);
+        }
+
+        timer = setTimeout(getAdsList, secs);
+        setOpacity(0.3);
+
+    },[q, state, cat, searchParams, setSearchParams, api]);
     //queryString section -- end
 
     const [stateList, setStateList] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [adList, setAdList] = useState([]);
-  
+   
     useEffect(()=> {
+
       const getStates = async () => {
         const slist = await api.getStates();
         setStateList(slist);
@@ -39,17 +73,9 @@ export const Ads = () => {
         setCategories(cats);
       }
   
-      const getRecentAds = async () => {
-        const json = await api.getAds({
-          sort:"desc",
-          limit:8
-        });
-        setAdList(json.ads);
-      }
-  
       getStates();
       getCategories();
-      getRecentAds();
+
     },[api]);
 
     
@@ -62,7 +88,7 @@ export const Ads = () => {
 
                         <div className="filterName">Estado:</div>
                         <select value={state} onChange={e=>setState(e.target.value)} name="state">
-                            <option value=""></option>
+                            <option value="">Nenhum</option>
                             {stateList.map((item, index) => (
                                 <option key={index} value={item.name}>{item.name}</option>
                             ))}
@@ -81,7 +107,20 @@ export const Ads = () => {
                     </form>
                 </div>
                 <div className="rightSide">
-                    ....
+                    <h2>Resultados</h2>
+
+                    {loading &&
+                        <div className="listWarning">Carregando...</div>
+                    }
+                    {!loading && adList.length === 0 &&
+                        <div className="listWarning">Não encontramos resultados.</div>
+                    }
+
+                    <div className="list" style={{opacity: opacity}}>
+                        {adList.map((item, index)=> (
+                            <AdItem key={index} data={item} />
+                        ))}
+                    </div>
                 </div>
             </C.PageArea>
         </PageContainer>

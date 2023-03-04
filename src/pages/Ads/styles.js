@@ -59,5 +59,24 @@ export const PageArea = styled.div`
 
     .rightSide {
         flex: 1;
+
+        h2 {
+            margin: 0;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            /* grid-auto-rows: minmax(150px, 1fr); */
+            gap: 20px;
+            
+        }
+
+        .listWarning {
+            text-align: center;
+            margin-top: 40px;
+        }
     }
 `;

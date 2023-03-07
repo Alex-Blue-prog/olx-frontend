@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {useSearchParams} from "react-router-dom";
 import * as C from "./styles";
 import useApi from "../../helpers/OlxAPI";
@@ -13,15 +13,47 @@ export const Ads = () => {
     //queryString section -- start
     const [searchParams, setSearchParams] = useSearchParams();
 
+    const[adsTotal, setAdsTotal] = useState(0);
+    const[pageCount, setPageCount] = useState(0);
+    const[currentPage, setCurrentPage] = useState(1);
     const[adList, setAdList] = useState([]);
+
     const[opacity, setOpacity] = useState(1);
-    // const[secs, setSecs] = useState(0);
     const[loading, setLoading] = useState(true);
+    // const[secs, setSecs] = useState(0);
 
     const[q, setQ] = useState(searchParams.get("q") || "");
     const[state, setState] = useState(searchParams.get("state") || "");
     const[cat, setCat] = useState(searchParams.get("cat") || "");
 
+    useEffect(()=> {
+        window.scrollTo(0, 0);
+    },[currentPage]);
+
+
+
+    const getAdsList = async () => {
+
+        // setLoading(true);
+        let offset = (currentPage - 1) * 9;
+
+        const json = await api.getAds({
+            sort:"desc",
+            limit:9,
+            q,
+            state,
+            cat,
+            offset
+          });
+
+          setAdList(json.ads);
+          setAdsTotal(json.total);
+
+          setOpacity(1);
+          setLoading(false);
+          secs = 2000;
+
+    }
 
     useEffect(() => {
     
@@ -31,23 +63,7 @@ export const Ads = () => {
         setSearchParams(searchParams);
 
         //get list of products(ads)
-        const getAdsList = async () => {
-
-            setLoading(true);
-
-            const json = await api.getAds({
-                sort:"desc",
-                limit:9,
-                q,
-                state,
-                cat
-              });
-
-              setAdList(json.ads);
-              setOpacity(1);
-              setLoading(false);
-              secs = 2000;
-        }
+        setCurrentPage(1);
 
         if(timer) {
             clearTimeout(timer);
@@ -57,6 +73,55 @@ export const Ads = () => {
         setOpacity(0.3);
 
     },[q, state, cat, searchParams, setSearchParams, api]);
+
+    //pagination -- start
+    useEffect(()=> {
+
+        //pegar quantidade de paginações baseado nesso calculo
+        if(adList.length > 0 ) {
+            setPageCount(Math.ceil(adsTotal / 9));
+        } else {
+            setPageCount(0);
+        }
+
+    },[adsTotal, adList.length])
+
+    useEffect(()=> {
+        //when currentPage changes, change the page too
+        getAdsList();
+        setOpacity(0.3);
+    },[currentPage])
+
+    let pagination = [];
+    for(let i = 0; i < pageCount; i++) {
+        pagination.push(i + 1);
+    }
+
+
+    const paginationContainer = useRef(); 
+    const [scroll, setScroll] = useState(0);
+
+    const goRight = () => {
+        if(scroll > paginationContainer.current.scrollWidth - paginationContainer.current.clientWidth) return;
+        setScroll(scroll + 50);  
+    }
+
+    const goLeft = () => {
+        if(scroll <= 0) return;
+        setScroll(scroll - 50);  
+    }
+
+
+    useEffect(() => {
+        paginationContainer.current?.scrollTo({
+            top: 0,
+            left: scroll,
+            behavior: "smooth"
+        });
+    },[scroll])
+
+    //pagination -- end
+
     //queryString section -- end
 
     const [stateList, setStateList] = useState([]);
@@ -109,7 +174,7 @@ export const Ads = () => {
                 <div className="rightSide">
                     <h2>Resultados</h2>
 
-                    {loading &&
+                    {loading && adList.length === 0 &&
                         <div className="listWarning">Carregando...</div>
                     }
                     {!loading && adList.length === 0 &&
@@ -121,6 +186,35 @@ export const Ads = () => {
                             <AdItem key={index} data={item} />
                         ))}
                     </div>
+                    
+                    <div className="paginationWrapper">
+                        <div 
+                            className="left" 
+                            onClick={goLeft} 
+                            style={{display: pagination.length >= 11 ? "block" : "none"}}>
+                        </div>
+
+                        <div 
+                            className="right" 
+                            onClick={goRight}
+                            style={{display: pagination.length >= 11 ? "block" : "none"}}
+                        >
+                        </div>
+
+                        <div className="paginationContainer" ref={paginationContainer}>
+
+                            <div className="pagination">
+                                {pagination.map((item, index) => (
+                                    <div key={index} onClick={()=> setCurrentPage(item)} className={item === currentPage ? "active pageItem" : "pageItem"}>
+                                        {item}
+                                    </div>
+                                ))}
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                    
                 </div>
             </C.PageArea>
         </PageContainer>

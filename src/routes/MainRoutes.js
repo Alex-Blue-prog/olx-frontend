@@ -8,6 +8,7 @@ import {SignUp} from "../pages/SignUp";
 import { AdPage } from "../pages/AdPage";
 import { AddAd } from "../pages/AddAd";
 import { Ads } from "../pages/Ads";
+import { MyAccount } from "../pages/MyAccount/";
 
 const MainRoutes = () => {
     
@@ -20,6 +21,7 @@ const MainRoutes = () => {
             <Route path="/ad/:id" element={<AdPage />} />
             <Route path="/ads" element={<Ads />} />
             <Route path="/post-an-ad" element={<RequireAuth> <AddAd /> </RequireAuth>} />
+            <Route path="/my-account" element={<RequireAuth> <MyAccount /> </RequireAuth>} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     )

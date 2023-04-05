@@ -139,6 +139,10 @@ const OlxAPI = {
     updateUser: async (userInfo) => {
         const json = await apiFetchPut("/user/me", userInfo);
         return json;
+    },
+    updateAd: async (adInfo, id) => {
+        const json = await apiFetchFile("/ad/" +id, adInfo);
+        return json;
     }
 }
 

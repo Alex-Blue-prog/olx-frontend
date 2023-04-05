@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as C from "./styles";
 import { ErrorMessage, PageContainer } from '../../components/MainComponents';
 import useApi from "../../helpers/OlxAPI";
-import { AdItem } from '../../components/partials/AdItem';
+import MiniSlider from '../../components/partials/MiniSlider';
 
 
 export const MyAccount = () => {
@@ -14,7 +14,6 @@ export const MyAccount = () => {
   const [disabled, setDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [stateList, setStateList] = useState([]);
-  const [categories, setCategories] = useState([]);
   
   //user states
   const [name, setName] = useState("");
@@ -26,11 +25,6 @@ export const MyAccount = () => {
 
 
   useEffect(()=> {
-
-    const getCategories = async () => {
-      const cats = await api.getCategories();
-      setCategories(cats);
-    }
 
     const getStates = async () => {
       const slist = await api.getStates();
@@ -48,7 +42,6 @@ export const MyAccount = () => {
 
     }
 
-    getCategories();
     getStates();
     getUser();
 
@@ -153,18 +146,7 @@ export const MyAccount = () => {
             <div className="list">
               {ads.map((item, index) => (
 
-                <div className='adItem' key={index}>
-                  <div className="imgContainer">
-                    <img src={item.images[0].url} alt="ad" />
-                  </div>
-                  <div className='adItemInfo'> <b>Nome:</b> {item.title}</div>
-                  <div className='adItemInfo'> <b>Preço:</b> {item.price}</div>
-                  <div className='adItemInfo'> <b>Negociável:</b> {item.priceNegotiable ? "sim" : "não"}</div>
-                  <div className='adItemInfo'> <b>Categoria:</b> {item.category} </div>
-                  <div className='adItemInfo'> <b>Status:</b> {item.status ? "online" : "offline"} </div>
-                  <div className='adItemInfo'> <b>Visualizações:</b> {item.views}</div>
-                  <button>Editar</button>
-                </div>
+                <MiniSlider key={index} data={item} />
 
               ))}
             </div>

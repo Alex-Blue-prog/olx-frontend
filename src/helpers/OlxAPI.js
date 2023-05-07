@@ -1,6 +1,7 @@
 import Cookies from "js-cookie";
 import qs from "qs";
-const BASEAPI = "http://alunos.b7web.com.br:501";
+// const BASEAPI = "http://alunos.b7web.com.br:501";
+const BASEAPI = "http://localhost:5000";
 
 const apiFetchGet = async (endpoint, body = []) => {
     
@@ -102,6 +103,30 @@ const apiFetchFile = async (endpoint, body) => {
     return json;
 }
 
+const apiFetchDelete = async (endpoint, body = []) => {
+    if(!body.token) {
+        let token = Cookies.get("token");
+        if(token) {
+            body.token = token;
+        }
+    }
+
+    console.log(body);
+
+    const res = await fetch(`${BASEAPI + endpoint}?${qs.stringify(body)}`, {
+        method: "DELETE"
+    });
+
+    const json = await res.json();
+
+    if(json.notallowed) {
+        window.location.href = "/signin";
+        return;
+    }
+
+    return json;
+}
+
 //API 
 const OlxAPI = {
     login: async(email, password) => {
@@ -125,7 +150,7 @@ const OlxAPI = {
         return json;
     },
     getAd: async (id, other = false) => {
-        const json = await apiFetchGet("/ad/item",{id, other});
+        const json = await apiFetchGet("/ad/"+id,{other});
         return json;
     },
     addAd: async (fData) => {
@@ -142,6 +167,10 @@ const OlxAPI = {
     },
     updateAd: async (adInfo, id) => {
         const json = await apiFetchFile("/ad/" +id, adInfo);
+        return json;
+    },
+    deleteAd: async (id) => {
+        const json = await apiFetchDelete("/ad/" + id);
         return json;
     }
 }

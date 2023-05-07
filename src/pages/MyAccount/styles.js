@@ -223,6 +223,11 @@ export const PageArea = styled.div`
                 outline: none;
                 font-size: 15px;
             }
+
+            .delBtn {
+                background-color: darkred;
+                margin-top: 5px;
+            }
         }
     }
 `;

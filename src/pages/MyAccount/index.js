@@ -33,11 +33,11 @@ export const MyAccount = () => {
 
     const getUser = async () => {
       const user = await api.getUser();
-      console.log(user.ads);
+      // console.log(user.ads);
       
-      setName(user.name);
-      setEmail(user.email);
-      setState(user.state);
+      // setName(user.name);
+      // setEmail(user.email);
+      // setState(user.state);
       setAds(user.ads);
 
     }
@@ -51,14 +51,28 @@ export const MyAccount = () => {
   const updateUserInfo = async (e) => {
     e.preventDefault();
 
-    setDisabled(true);
     setError("");
+    setDisabled(true);
     setLoading(true);
 
-    const json = await api.updateUser({name, email, state, password});
+    let userNewInfo =  {
+      name: name || undefined,
+      email: email || undefined,
+      state: state || undefined,
+      password: password || undefined
+    }
+
+    const json = await api.updateUser(userNewInfo);
 
     if(json.error) {
-      setError(json.error);
+      
+      const nameError = json.error?.name?.msg;
+      const emailError = json.error?.email?.msg;
+      const passwordError = json.error?.password?.msg;
+      const stateError = json.error?.state?.msg;
+
+      const serverError = nameError || emailError || passwordError || stateError;
+      setError(serverError);
     } else {
       window.alert("Informações de usuário alteradas com sucesso.");
     }
@@ -121,9 +135,10 @@ export const MyAccount = () => {
 
                   <div className="inputDiv">
                     <select disabled={disabled}  onChange={e => setState(e.target.value)} value={state} name="state" id="state">
-        
+
+                      <option value=""></option>
                       {stateList.map((item, index) => (
-                        <option key={index} value={item.name}>{item.name}</option>
+                        <option key={index} value={item._id}>{item.name}</option>
                       ))}
 
                     </select>

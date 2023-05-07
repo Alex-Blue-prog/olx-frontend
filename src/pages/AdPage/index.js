@@ -109,12 +109,10 @@ export const AdPage = () => {
 
                         {adInfo.images &&
                             <div className="slide" style={{marginLeft: `calc(-100% * ${slidePosition})`}}>
-
-                                   
-
+ 
                                 {adInfo.images.map((img, index) => (
                                     <div key={index} className="slideItem">
-                                        <img src={img} alt="" />
+                                        <img src={img} alt="Anúncio" />
                                     </div>
                                 ))}
 

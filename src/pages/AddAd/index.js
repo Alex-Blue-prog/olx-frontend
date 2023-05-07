@@ -79,6 +79,8 @@ export const AddAd = () => {
         setDisabled(false);
     }
 
+    console.log(fileField);
+
     //price formater
     const priceMask = createNumberMask({
         prefix: "R$ ",

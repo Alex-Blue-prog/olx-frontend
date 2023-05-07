@@ -49,10 +49,11 @@ const MiniSlider = ({data}) => {
     const [title, setTitle] = useState(data.title);
     const [price, setPrice] = useState(data.price);
     const [negotiable, setNegotiable] = useState(data.priceNegotiable);
-    const [status, setStatus] = useState(data.status);
+    const [status, setStatus] = useState(data.status === "true" ? true : false);
     const [category, setCategory] = useState("");
     const [description, setDescription] = useState(data.description);
     const fileField = useRef();
+
 
      //price formater
      const priceMask = createNumberMask({
@@ -61,7 +62,8 @@ const MiniSlider = ({data}) => {
         thousandsSeparatorSymbol:'.',
         allowDecimal: true,
         decimalSymbol: ","
-    })
+    });
+
 
     //update ad information
     const editAd = async (e) => {
@@ -72,17 +74,18 @@ const MiniSlider = ({data}) => {
         const fData = new FormData();
         fData.append("title", title);
         fData.append("price", price);
-        fData.append("priceNegotiable", negotiable);
+        fData.append("priceneg", negotiable);
         fData.append("status", status);
-        fData.append("description", description);
+        fData.append("desc", description);
+        fData.append("cat", category);
 
         if(fileField.current.files.length > 0) {
-            for(let i = 0; i < fileField.current.length; i++) {
-                fData("img", fileField.current.files[i]);
+            for(let i=0; i < fileField.current.files.length; i++) {
+                fData.append('img', fileField.current.files[i]);
             }
         }
-        
-        const json = await api.updateAd(fData, data.id);
+
+        const json = await api.updateAd(fData, data._id);
 
         if(!json.error) {
             alert("Informações salvas com sucesso.");
@@ -94,6 +97,7 @@ const MiniSlider = ({data}) => {
 
         setDisabled(false);
     }
+
 
   return (
         <div className='adItem'>
@@ -111,7 +115,7 @@ const MiniSlider = ({data}) => {
                             <MaskedInput 
                                 mask={priceMask} 
                                 placeholder="R$ "
-                                disabled={disabled || data.priceNegotiable}
+                                disabled={disabled || negotiable}
                                 value={price}
                                 onChange={e=> setPrice(e.target.value)}
                             />
@@ -155,7 +159,7 @@ const MiniSlider = ({data}) => {
             <div className="imgContainer">
 
                 {data.images.map((value, index) => (
-                    <img style={{display: slideIndex === index ? "block" : "none"}} src={`http://alunos.b7web.com.br:501/media/${value.url}`} alt="ad" key={index} />
+                    <img style={{display: slideIndex === index ? "block" : "none"}} src={value.url} alt="ad" key={index} />
                 ))}
 
                 <div onClick={slideLeft} className="leftIcon">
@@ -172,6 +176,7 @@ const MiniSlider = ({data}) => {
             <div className='adItemInfo'> <b>Status:</b> {data.status ? "online" : "offline"} </div>
             <div className='adItemInfo'> <b>Visualizações:</b> {data.views}</div>
             <button onClick={() => setOpenModal(true)}>Editar</button>
+            {/* <button className='delBtn' onClick={deleteAd}>Deletar</button> */}
         </div>
   )
 }
